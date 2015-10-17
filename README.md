@@ -12,3 +12,7 @@ A small script to provide several commands typically used to administrate Typo3 
     <br />WITH THIS SCRIPT YOU CAN KILL YOUR SITE WITH JUST TWO CLICKS</li>
   <li>KNOW WHAT YOU ARE DOING</li>
 </ol>
+
+## Licence
+<strong>No license</strong> - do what you want but in your own risk (this script is possible insecure - best is to remove it from server after work!)
+
