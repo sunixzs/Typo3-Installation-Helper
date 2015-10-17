@@ -1444,8 +1444,10 @@ class Typo3Commands {
 				foreach ( $group[ 'commands' ] as $command ) {
 					if (is_array ( $command ) && isset ( $command[ "label" ] ) && isset ( $command[ "command" ] )) {
 						$i ++;
-						$htmlSelected = (isset ( $_POST[ 'commands' ] ) && in_array ( $command[ "command" ], $_POST[ 'commands' ] )) ? 'selected="selected"' : '';
-						$html .= '<option value="' . $command[ "command" ] . '" title="' . htmlentities ( $command[ "title" ] ) . '" ' . $htmlSelected . '>[' . str_pad ( $i, 2, "0", STR_PAD_LEFT ) . '] ' . htmlentities ( str_replace ( array_keys ( $this->commandTitleReplacements ), $this->commandTitleReplacements, $command[ "label" ] ) ) . '</option>';
+						$html .= '<option value="' . $command[ "command" ] . '"';
+						$html .= (isset ( $command[ "title" ] )) ? ' title="' . htmlentities ( $command[ "title" ] ) . '"' : '';
+						$html .= (isset ( $_POST[ 'commands' ] ) && in_array ( $command[ "command" ], $_POST[ 'commands' ] )) ? ' selected="selected"' : '';
+						$html .= '>[' . str_pad ( $i, 2, "0", STR_PAD_LEFT ) . '] ' . htmlentities ( str_replace ( array_keys ( $this->commandTitleReplacements ), $this->commandTitleReplacements, $command[ "label" ] ) ) . '</option>';
 						
 						$this->commandsByKey[ $command[ "command" ] ] = '[' . str_pad ( $i, 2, "0", STR_PAD_LEFT ) . '] ' . htmlentities ( $command[ "label" ] );
 					}
