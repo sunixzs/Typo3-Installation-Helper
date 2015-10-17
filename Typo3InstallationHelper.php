@@ -314,8 +314,8 @@ try {
 class Typo3Commands {
 	/**
 	 * Password to check for.
-	 * The first time you call this script add this value as password-parameter:
-	 * typo3_commands-x.x.x.php?password=String from $password
+	 * If you have not set setUseLoginSession( true ), you have to call this script with an additional parameter:
+	 * Typo3InstallationHelper.php?password=String from $password
 	 * @var string
 	 */
 	protected $password = "";
