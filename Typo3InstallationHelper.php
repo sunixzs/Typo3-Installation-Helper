@@ -654,7 +654,7 @@ class Typo3Commands {
 					"commands" => array (
 							array (
 									"label" => "create 'typo3conf/ENABLE_INSTALL_TOOL'",
-									"command" => "create_typo3conf/ENABLE_INSTALL_TOOL" 
+									"command" => "create_typo3conf_ENABLE_INSTALL_TOOL" 
 							),
 							array (
 									"label" => "create 'typo3conf/LOCK_BACKEND'",
@@ -1063,7 +1063,7 @@ class Typo3Commands {
 					}
 				}
 				break;
-			case "create_typo3conf/ENABLE_INSTALL_TOOL" :
+			case "create_typo3conf_ENABLE_INSTALL_TOOL" :
 				$this->do_exec ( 'touch typo3conf/ENABLE_INSTALL_TOOL' );
 				break;
 			case "create_typo3conf_LOCK_BACKEND" :
