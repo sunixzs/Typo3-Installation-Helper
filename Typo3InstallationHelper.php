@@ -1425,6 +1425,19 @@ class Typo3Commands {
 	 * @return string HTML
 	 */
 	protected function showCommandForm() {
+		// try to get database information to show them and to prevent doing stuff on the wrong database
+		try {
+			$this->loadTypo3Configuration();
+			$this->checkDatabasePartInTypo3Configuration();
+			$this->getDatabaseConfiguration();
+			foreach ($this->commands['database']['commands'] as &$databaseCommand) {
+				$databaseCommand['label'] = "DB " . $this->databaseConfiguration['database'] . ": ". $databaseCommand['label'] ; 
+			}
+		} catch (Exception $e) {
+			// remove database stuff from commands
+			unset($this->commands['database']);
+		}
+		
 		$html = '';
 		
 		$html .= '<form action="' . $this->getSelfUrl () . '" method="post" name="commands_form">';
