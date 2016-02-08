@@ -580,7 +580,7 @@ class Typo3Commands {
 							) 
 					) 
 			),
-			array (
+			'database' => array (
 					"label" => 'database',
 					'commands' => array (
 							array (
