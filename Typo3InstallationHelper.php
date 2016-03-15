@@ -597,6 +597,11 @@ class Typo3Commands {
 									"label" => "convert latin1 characters on a utf8 table to utf8",
 									"command" => 'convert_latin1_on_utf8_to_utf8',
 									"title" => "works only with newer Typo3 versions with LocalConfiguration-file" 
+							),
+							array (
+									"label" => "convert all tables to utf8_general_ci",
+									"command" => 'convert_all_tables_to_utf8_general_ci',
+									"title" => "works only with newer Typo3 versions with LocalConfiguration-file" 
 							) 
 					) 
 			),
@@ -1012,6 +1017,9 @@ class Typo3Commands {
 			case "convert_latin1_on_utf8_to_utf8" :
 				$this->do_convert_latin1_on_utf8_to_utf8 ();
 				break;
+			case "convert_all_tables_to_utf8_general_ci" :
+				$this->do_convert_all_tables_to_utf8_general_ci ();
+				break;
 			case "create_htpasswd" :
 				$htpasswdFile = $this->getPathSite () . ".htpasswd";
 				
@@ -1354,6 +1362,44 @@ class Typo3Commands {
 						$this->do_echo ( "... done." );
 					}
 				}
+			}
+		}
+	}
+	
+	/**
+	 * Method to convert latin1 chars in an utf8 database to utf8.
+	 */
+	protected function do_convert_all_tables_to_utf8_general_ci() {
+		// load the typo3Configuration
+		$this->loadTypo3Configuration ();
+		
+		// check DB-Configuration
+		$this->checkDatabasePartInTypo3Configuration ();
+		
+		// set the database-parameters for local use
+		$this->getDatabaseConfiguration ();
+		
+		// connect to database
+		$mysqli = new mysqli ( $this->databaseConfiguration[ 'host' ], $this->databaseConfiguration[ 'username' ], $this->databaseConfiguration[ 'password' ], $this->databaseConfiguration[ 'database' ], $this->databaseConfiguration[ 'port' ] );
+		if ($mysqli->connect_errno) {
+			throw new Exception ( "Failed to connect to MySQL: " . $mysqli->connect_error );
+		}
+		// find the tables
+		$query = "SELECT CONCAT('ALTER TABLE `', tbl.`TABLE_SCHEMA`, '`.`', tbl.`TABLE_NAME`, '` CONVERT TO CHARACTER SET utf8 COLLATE utf8_general_ci;') FROM `information_schema`.`TABLES` tbl WHERE tbl.`TABLE_SCHEMA` = '" . $this->databaseConfiguration[ 'database' ] . "' ";
+		$result = $mysqli->query ( $query );
+		if (! $result) {
+			$this->do_error_echo ( "Failed to run query: (" . $mysqli->errno . ") " . $mysqli->error );
+			return null;
+		}
+		
+		while ( $row = $result->fetch_assoc () ) {
+			$subQuery = reset ( $row );
+			$subResult = $mysqli->query ( $subQuery );
+			
+			if (! $subResult) {
+				$this->do_error_echo ( $subQuery . " ... failed to run query: (" . $mysqli->errno . ") " . $mysqli->error );
+			} else {
+				$this->do_echo ( $subQuery . "... done." );
 			}
 		}
 	}
