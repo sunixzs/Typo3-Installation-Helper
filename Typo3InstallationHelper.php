@@ -47,7 +47,7 @@ $Typo3Commands->setUseLoginSession ( true );
 /**
  * Typo3-Version working with and to get from sourceforge.net
  */
-$Typo3Commands->setTypo3Version ( "7.4.0" );
+$Typo3Commands->setTypo3Version ( "8.7.8" );
 
 /**
  * Host where your typo3 package with a website in could be found.
@@ -79,7 +79,7 @@ $Typo3Commands->setTypo3ConfigurationFile ( 'typo3conf/LocalConfiguration.php' )
 /**
  * The path to the mysqldump for import. 
  */
-$Typo3Commands->setMysqlImportDumpFile ( 'mysqldump_typo3site.de.sql' );
+$Typo3Commands->setMysqlImportDumpFile ( 'mysqldump_Typo3-X.X.X_20170327-130451_db290431_201.sql' );
 
 /**
  * The user and password which will be set in the .htpasswd file.
@@ -529,6 +529,10 @@ class Typo3Commands {
 					"label" => 'get typo3 source',
 					'commands' => array (
 							array (
+									"label" => "get 'typo3_src-{TYPO3_VERSION}.tar.gz' from get.typo3.org",
+									"command" => 'get_typo3_from_get_typo3_org' 
+							),
+							array (
 									"label" => "get 'typo3_src-{TYPO3_VERSION}.tar.gz' from sourceforge",
 									"command" => 'get_typo3_from_sourceforge' 
 							),
@@ -912,6 +916,9 @@ class Typo3Commands {
 		switch ($command) {
 			case "get_typo3_from_sourceforge" :
 				$this->do_exec ( 'wget http://prdownloads.sourceforge.net/typo3/typo3_src-' . $this->typo_version . '.tar.gz' );
+				break;
+			case "get_typo3_from_get_typo3_org" :
+				$this->do_exec ( 'wget --content-disposition get.typo3.org/' . $this->typo_version );
 				break;
 			case "extract_typo3-src_tar_gz" :
 				if (is_dir ( 'typo3_src-' . $this->typo_version )) {
@@ -1426,7 +1433,8 @@ class Typo3Commands {
 			throw new Exception ( "Could not find the typo3Configuration for the database." );
 		}
 		
-		if (isset ( $this->typo3Configuration[ 'DB' ][ 'database' ] ) == false || isset ( $this->typo3Configuration[ 'DB' ][ 'username' ] ) == false || isset ( $this->typo3Configuration[ 'DB' ][ 'password' ] ) == false) {
+		if (isset ( $this->typo3Configuration[ 'DB' ][ 'database' ] ) == false || isset ( $this->typo3Configuration[ 'DB' ][ 'username' ] ) == false || isset ( 
+				$this->typo3Configuration[ 'DB' ][ 'password' ] ) == false) {
 			throw new Exception ( "Not all data is set in typo3Configuration for database-access (database, username, password)." );
 		}
 	}
@@ -1473,15 +1481,15 @@ class Typo3Commands {
 	protected function showCommandForm() {
 		// try to get database information to show them and to prevent doing stuff on the wrong database
 		try {
-			$this->loadTypo3Configuration();
-			$this->checkDatabasePartInTypo3Configuration();
-			$this->getDatabaseConfiguration();
-			foreach ($this->commands['database']['commands'] as &$databaseCommand) {
-				$databaseCommand['label'] = "DB " . $this->databaseConfiguration['database'] . ": ". $databaseCommand['label'] ; 
+			$this->loadTypo3Configuration ();
+			$this->checkDatabasePartInTypo3Configuration ();
+			$this->getDatabaseConfiguration ();
+			foreach ( $this->commands[ 'database' ][ 'commands' ] as &$databaseCommand ) {
+				$databaseCommand[ 'label' ] = "DB " . $this->databaseConfiguration[ 'database' ] . ": " . $databaseCommand[ 'label' ];
 			}
-		} catch (Exception $e) {
+		} catch ( Exception $e ) {
 			// remove database stuff from commands
-			unset($this->commands['database']);
+			unset ( $this->commands[ 'database' ] );
 		}
 		
 		$html = '';
@@ -1506,7 +1514,8 @@ class Typo3Commands {
 						$html .= '<option value="' . $command[ "command" ] . '"';
 						$html .= (isset ( $command[ "title" ] )) ? ' title="' . htmlentities ( $command[ "title" ] ) . '"' : '';
 						$html .= (isset ( $_POST[ 'commands' ] ) && in_array ( $command[ "command" ], $_POST[ 'commands' ] )) ? ' selected="selected"' : '';
-						$html .= '>[' . str_pad ( $i, 2, "0", STR_PAD_LEFT ) . '] ' . htmlentities ( str_replace ( array_keys ( $this->commandTitleReplacements ), $this->commandTitleReplacements, $command[ "label" ] ) ) . '</option>';
+						$html .= '>[' . str_pad ( $i, 2, "0", STR_PAD_LEFT ) . '] ' . htmlentities ( 
+								str_replace ( array_keys ( $this->commandTitleReplacements ), $this->commandTitleReplacements, $command[ "label" ] ) ) . '</option>';
 						
 						$this->commandsByKey[ $command[ "command" ] ] = '[' . str_pad ( $i, 2, "0", STR_PAD_LEFT ) . '] ' . htmlentities ( $command[ "label" ] );
 					}
